@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+       insert into dish(name,description,price,image,category_id,update_time,create_time,update_user,create_user,status) values(#{name},#{description},
+       #{price},#{image},#{categoryId},#{updateTime},#{createTime},#{updateUser},#{createUser},#{status})
+    </insert>
+    <update id="update">
+        update dish
+            <set>
+                <if test="name != null and name !=''">name = #{name},</if>
+                 <if test="description != null and description !=''">description = #{description},</if>
+                 <if test="price != null">price = #{price},</if>
+                <if test="image != null and image !=''">image = #{image},</if>
+                <if test="categoryId != null">category_id = #{categoryId},</if>
+                update_time = #{updateTime},
+                update_user = #{updateUser},
+                status = #{status}
+            </set>
+        where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from dish where id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+    </delete>
+    <select id="page" resultType="com.sky.dto.DishDTO">
+        select * from dish
+        <where>
+            <if test="name != null and name !=''">name like concat('%',#{name},'%')</if>
+            <if test="categoryId != null">and category_id = #{categoryId}</if>
+            <if test="status != null">and status = #{status}</if>
+        </where>
+        order by create_time desc
+    </select>
+</mapper>
